@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Interattivo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #e6f4ea;
+      color: #1b5e20;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      height: 100vh;
+      margin: 0;
+      padding-top: 40px;
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 30px;
+      color: #1b5e20;
+    }
+    #quiz-container {
+      background: #ffffff;
+      padding: 20px 30px;
+      border: 2px solid #1b5e20;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      max-width: 500px;
+      text-align: center;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 15px;
+      border: 2px solid #1b5e20;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #1b5e20;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #success-message {
+      font-size: 24px;
+      color: #2e7d32;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎁 Vinci il tuo regalo di compleanno!</h1>
+
+  <div id="quiz-container">
+    <h2 id="question"></h2>
+    <input type="text" id="answer" placeholder="Rispondi qui">
+    <button onclick="checkAnswer()">Invia</button>
+    <div id="feedback"></div>
+  </div>
+
+  <div id="post-dario-container" style="display:none;">
+    <h2 id="dario-message"></h2>
+    <button onclick="avanzaMessaggio()">OK</button>
+  </div>
+
+  <div id="success-message" style="display: none;">🎉 Complimenti hai risposto a tutte le domande, vieni nella stanza "più grande della casa" per ritirare il tuo regalo/premio!</div>
+
+  <script>
+    const quiz = [
+      { question: "Se fossi una pasta, che pasta saresti?", answer: "Burro e noci" },
+      { question: "Quale è l'isola più bella del mondo?", answer: "Sicilia" },
+      { question: "Quanti divani ci sono in questa casa?", answer: "0" },
+      { question: "Chi è il nostro orso preferito?", answer: "Dylan" },
+      { question: "Chi è il tuo coinquilino preferito?", answer: "Dario" }
+    ];
+
+    const darioMessaggi = [
+      "E si hai proprio ragione Dario è davvero fantastico",
+      "E anche molto simpatico",
+      "E pure intelligente"
+    ];
+
+    let current = 0;
+    let messaggioIndex = 0;
+
+    function mostraDomanda() {
+      document.getElementById("question").innerText = quiz[current].question;
+      document.getElementById("answer").value = "";
+      document.getElementById("feedback").innerText = "";
+    }
+
+    function checkAnswer() {
+      const userAnswer = document.getElementById("answer").value.trim();
+      const correctAnswer = quiz[current].answer;
+
+      if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+        // Se è la domanda su Dario, mostra i messaggi speciali
+        if (quiz[current].question.includes("coinquilino preferito")) {
+          document.getElementById("quiz-container").style.display = "none";
+          document.getElementById("post-dario-container").style.display = "block";
+          document.getElementById("dario-message").innerText = darioMessaggi[messaggioIndex];
+          return;
+        }
+
+        current++;
+        if (current < quiz.length) {
+          mostraDomanda();
+        } else {
+          mostraSuccesso();
+        }
+      } else {
+        // Se è la domanda sul coinquilino preferito, messaggio personalizzato
+        if (quiz[current].question.includes("coinquilino preferito")) {
+          document.getElementById("feedback").innerText = `Ma ti pare possibile che ${userAnswer} sia il tuo coinquilino preferito? Riprova!`;
+        } else {
+          document.getElementById("feedback").innerText = "❌ Risposta errata. Riprova.";
+        }
+      }
+    }
+
+    function avanzaMessaggio() {
+      messaggioIndex++;
+      if (messaggioIndex < darioMessaggi.length) {
+        document.getElementById("dario-message").innerText = darioMessaggi[messaggioIndex];
+      } else {
+        document.getElementById("post-dario-container").style.display = "none";
+        current++;
+        if (current < quiz.length) {
+          document.getElementById("quiz-container").style.display = "block";
+          mostraDomanda();
+        } else {
+          mostraSuccesso();
+        }
+      }
+    }
+
+    function mostraSuccesso() {
+      document.getElementById("quiz-container").style.display = "none";
+      document.getElementById("post-dario-container").style.display = "none";
+      document.getElementById("success-message").style.display = "block";
+    }
+
+    mostraDomanda();
+  </script>
+</body>
+</html>
